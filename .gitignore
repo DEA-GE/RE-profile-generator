@@ -1,0 +1,12 @@
+# ignore everything by default
+*
+
+# only track these
+!.gitignore
+!config.yaml
+!cutout_download.py
+!REninja_download.py
+!timeseries.py
+!utils.py
+!input_data/
+!input_data/.gitkeep
