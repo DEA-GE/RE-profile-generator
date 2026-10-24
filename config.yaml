@@ -16,10 +16,9 @@ study_area:
 
 
 #-- Weather data download settings -------------------------------------------------------------
-weather_years: 
-    years: [2025,2026] # list of historical weather years 
-    start: 01-01 # start date for weather data download in MM-DD format
-    end: 12-31 # end date for weather data download in MM-DD format
+cutout_timeframe: 
+    start: 2026-01-01 # start date for weather data download in YYYY-MM-DD format
+    end: 2026-04-30 # end date for weather data download in MM-DD format
 cutout_name: "{study_region_name}_{year}_edh_corrected" # Cutout file name template "{study_region_name}-{year}-era5-edh"
 cutout_dir: cutouts # Local directory for cutout files 
 cutout_modules: [era5-edh, era5-corrected] # List of cutout modules to use "era5-edh", "era5-corrected"

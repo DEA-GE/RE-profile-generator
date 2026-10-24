@@ -17,9 +17,8 @@ os.makedirs(cutouts_dir, exist_ok=True)
 
 custom_filename = CONFIG["study_area"].get("custom_study_area_filename")
 custom_polygon_path = os.path.join("input_data", custom_filename) if custom_filename else None
-weather_years = CONFIG["weather_years"]["years"]
-weather_year_start = CONFIG["weather_years"]["start"]
-weather_year_end = CONFIG["weather_years"]["end"]
+cutout_start = CONFIG["cutout_timeframe"]["start"]
+cutout_end = CONFIG["cutout_timeframe"]["end"]
 study_region_name = CONFIG["study_region_name"]
 
 
@@ -43,30 +42,30 @@ print(
     f"Bounding box (EPSG:4326): \nminx: {bounds[0]}, miny: {bounds[1]}, maxx: {bounds[2]}, maxy: {bounds[3]}"
 )
 
-for weather_year in weather_years:
-    print(
-        f"\nDownloading weather data for year {weather_year} \n start: {weather_year_start} \n end: {weather_year_end}"
-    )
-    # download settings
-    cutout = atlite.Cutout(
-        path=os.path.join(
-            cutouts_dir,
-            f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, year=weather_year)}.nc",
-        ),
-        module=CONFIG["cutout_modules"],
-        x=slice(bounds[0], bounds[2]),
-        y=slice(bounds[1], bounds[3]),
-        #       time=str(weather_year)
-        time=slice(
-            f"{weather_year}-{weather_year_start}", f"{weather_year}-{weather_year_end}"
-        ),
-    )
 
-    # download
-    #print("\ncheck status: https://cds.climate.copernicus.eu/requests?tab=all\n")
-    cutout.prepare(
-        features=CONFIG["cutout_features"],
+print(
+    f"\nDownloading weather data: \n start: {cutout_start} \n end: {cutout_end}"
+)
+# download settings
+cutout = atlite.Cutout(
+    path=os.path.join(
+        cutouts_dir,
+        f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, year=str(CONFIG["cutout_timeframe"]["start"])[:4])}.nc",
+    ),
+    module=CONFIG["cutout_modules"],
+    x=slice(bounds[0], bounds[2]),
+    y=slice(bounds[1], bounds[3]),
+    #       time=str(weather_year)
+    time=slice(
+        f"{cutout_start}", f"{cutout_end}"
+    ),
+)
+
+# download
+#print("\ncheck status: https://cds.climate.copernicus.eu/requests?tab=all\n")
+cutout.prepare(
+    features=CONFIG["cutout_features"],
 #        monthly_requests=True,
 #        concurrent_requests=True,
 #        compression=None,
-    )
+)
