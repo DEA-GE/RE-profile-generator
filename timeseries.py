@@ -175,7 +175,11 @@ for tech_name in enabled_techs:
 
         # Load custom or atlite turbine/panel files
         if resource.get("turbine") is not None:
-            resource["turbine"] = load_turbine_or_panel(resource["turbine"], dirname)
+            resource["turbine"] = load_turbine_or_panel(
+                resource["turbine"],
+                dirname,
+                default_hub_height=CONFIG.get("ninja", {}).get("height", 100),
+            )
             if hub_height_override is not None:
                 resource["turbine"] = {**get_windturbineconfig(resource["turbine"]), "hub_height": hub_height_override}
         if resource.get("panel") is not None:

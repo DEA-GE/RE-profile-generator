@@ -6,7 +6,13 @@ from space2stats_client import Space2StatsClient
 import os
 import logging
 from pathlib import Path
+from functools import lru_cache
 from shapely.geometry import box
+
+NINJA_POWER_CURVES_URL = (
+    "https://raw.githubusercontent.com/renewables-ninja/vwf/master/power_curves/"
+    "Wind%20Turbine%20Power%20Curves%20%7E%205%20(0.01ms%20with%200.00%20w%20smoother).csv"
+)
 
 
 def _download_admin_boundary_wb(
@@ -246,17 +252,42 @@ def get_study_area_polygon(
 
 
 # --- Helper function to load custom or atlite turbine/panel files ---
-def load_turbine_or_panel(name, dirname):
+@lru_cache(maxsize=1)
+def _load_ninja_power_curves():
+    logging.info("    Downloading Renewables.ninja turbine power curves")
+    return pd.read_csv(NINJA_POWER_CURVES_URL)
+
+
+def get_ninja_turbine(name, hub_height=100, dirname=None):
+    """Return a named Renewables.ninja curve as an atlite turbine config."""
+    power_curves = _load_ninja_power_curves()
+    if name not in power_curves.columns:
+        raise KeyError(f"Renewables.ninja power curve '{name}' was not found")
+
+    project_dir = Path(dirname) if dirname is not None else Path(__file__).resolve().parent
+    ratings = pd.read_csv(project_dir / "input_data" / "ninja_turbines_power.csv", index_col="turbine")
+    rated_power = float(ratings.loc[name, "kWp"]) / 1000
+
+    return {
+        "name": name,
+        "V": power_curves["speed"].to_numpy(dtype=float),
+        "POW": power_curves[name].to_numpy(dtype=float) * rated_power,
+        "P": rated_power,
+        "hub_height": hub_height,
+    }
+
+
+def load_turbine_or_panel(name, dirname, default_hub_height=None):
     """
-    Load turbine or panel from custom configs/advanced_settings folder first,
-    then fall back to atlite's internal files.
+    Load a turbine or panel: custom file first, then atlite, then Renewables.ninja (turbines only).
 
     Args:
         name: Name of the turbine/panel (e.g., "HW_farm", "Vestas_V112_3MW", "CSi")
         dirname: Working directory path
+        default_hub_height: Default hub height for Renewables.ninja turbines
 
     Returns:
-        Path to custom yaml file, or original name string if using atlite internal files
+        A custom YAML path, atlite name, or atlite turbine configuration dictionary
     """
     if name is None:
         return None
@@ -266,6 +297,16 @@ def load_turbine_or_panel(name, dirname):
     if os.path.exists(custom_path):
         logging.info(f"    Loading custom turbine/panel from: {custom_path}")
         return Path(custom_path)
+
+    # Turbines (identified by default_hub_height): search atlite first, then Renewables.ninja
+    if default_hub_height is not None and not name.startswith("oedb:"):
+        from atlite.resource import windturbines
+
+        if name.replace(".yaml", "") in windturbines:
+            logging.info(f"    Using atlite internal turbine: {name}")
+            return name
+        logging.info(f"    Loading Renewables.ninja turbine: {name}")
+        return get_ninja_turbine(name, default_hub_height, dirname=dirname)
 
     # Fall back to atlite's internal files (pass name as string)
     logging.info(f"    Using atlite internal turbine/panel: {name}")

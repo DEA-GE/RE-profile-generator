@@ -7,7 +7,8 @@ import logging
 import time
 import geopandas as gpd
 from io import StringIO
-from utils import to_52_weeks
+import re
+from utils import to_52_weeks, build_turbine_assignment, build_turbine_hubheight_runs, split_runs_by_hub_height
 
 logging.basicConfig(level=logging.INFO)
 
@@ -27,8 +28,6 @@ dataset = ninja.get("dataset", "merra2")
 capacity = ninja.get("capacity", 1)
 system_loss = ninja.get("system_loss", 0.1)
 hub_height = ninja.get("height", 100)
-default_turbine = ninja.get("default_turbine", "Vestas V90 3000")
-turbine_map = ninja.get("turbine_map") or {}  # {RE Ninja turbine name: [shape names]}
 default_tilt = ninja.get("tilt", 35)
 default_azim = ninja.get("azim", 180)
 
@@ -118,20 +117,12 @@ def get_wind_data(lat, lon, turbine, date_from, date_to, capacity=1.0, height=10
     return _request('data/wind', args)
 
 
-shape_turbine = {}  # {shape name: (RE Ninja turbine name, hub height)}
-for _turbine, _spec in turbine_map.items():
-    _height = _spec.get("hub_height", hub_height)
-    for _shape in _spec.get("shapes") or []:
-        if _shape not in coords:
-            raise KeyError(f"ninja.turbine_map: '{_shape}' (turbine '{_turbine}') not found in shapes file")
-        shape_turbine[_shape] = (_turbine, _height)
-
-
-def ninja_turbine(region):
-    if region in shape_turbine:
-        return shape_turbine[region]
-    logging.warning(f"    No RE Ninja turbine mapped for '{region}', using default '{default_turbine}'")
-    return default_turbine, hub_height
+def to_api_turbine_name(name):
+    """Convert 'Nordex.N43.600' (power-curve name) to the API name 'Nordex N43 600'."""
+    match = re.fullmatch(r"([^.]+)\.(.+)\.(\d+)", name)
+    if match:
+        return " ".join(match.groups())
+    return name.replace(".", " ", 1)
 
 
 # --- Download and save timeseries profiles for each technology ---
@@ -147,31 +138,38 @@ for tech_name in enabled_techs:
         logging.warning("    'windspeeds' is not available from RE Ninja, skipped")
         continue
 
-    # runs: (name shown in 2nd header row, RE Ninja turbine or None, regions)
+    # runs: (turbine/panel name, regions, hub height override), built as in timeseries.py
     if method == "wind":
         turbine_column = resource.get("turbine_column_name")
-        if turbine_column:
+        hubheight_column = resource.get("hubheight_column_name")
+        for column in (turbine_column, hubheight_column):
+            if column and column not in shapes.columns:
+                raise KeyError(f"Column '{column}' not found in shapes file")
+        if turbine_column and hubheight_column:
+            runs = build_turbine_hubheight_runs(shapes, turbine_column, hubheight_column)
+        elif turbine_column:
             # polygons with an empty cell are skipped, as in timeseries.py
-            wind_regions = [r for r in coords if pd.notna(shapes.loc[r, turbine_column])]
+            runs = [(name, regions, None) for name, regions in build_turbine_assignment(shapes, turbine_column).items()]
         else:
-            wind_regions = list(coords)
-        runs = []
-        for r in wind_regions:
-            t, h = ninja_turbine(r)
-            runs.append((t, (t, h), [r]))
+            runs = [(resource.get("turbine"), None, None)]
+            if hubheight_column:
+                runs = split_runs_by_hub_height(runs, shapes, hubheight_column)
     elif method == "pv":
-        runs = [(resource.get("panel"), None, list(coords))]
+        runs = [(resource.get("panel"), None, None)]
     else:
         logging.warning(f"    Method '{method}' not supported for RE Ninja, skipped")
         continue
 
     frames = []
-    for item_name, turbine, regions in runs:
-        for region in regions:
+    for item_name, run_regions, run_height in runs:
+        for region in (list(coords) if run_regions is None else run_regions):
             lat, lon = coords[region]
             logging.info(f"    {tech_name}: {region} ({item_name}) - {year}")
             if method == "wind":
-                series, _ = get_wind_data(lat, lon, turbine[0], date_from, date_to, capacity=capacity, height=turbine[1])
+                series, _ = get_wind_data(
+                    lat, lon, to_api_turbine_name(str(item_name)), date_from, date_to,
+                    capacity=capacity, height=hub_height if run_height is None else run_height,
+                )
             else:
                 tracking = resource.get("tracking")
                 series, _ = get_solar_data(
