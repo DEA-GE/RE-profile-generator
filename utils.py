@@ -286,6 +286,56 @@ def to_52_weeks(df, weeks=52):
         logging.info(f"    Filled {missing} trailing steps from the start of the series")
     return out
 
+def split_runs_by_hub_height(runs, shapes, column):
+    """Split (name, regions, hub_height) runs into one run per hub height; empty cells give None (turbine default)."""
+    height_runs = []
+    for item_name, run_regions, _ in runs:
+        regions_to_run = shapes.index if run_regions is None else run_regions
+        grouped_regions = {}
+        for region in regions_to_run:
+            value = shapes.at[region, column]
+            height = None if pd.isna(value) else int(value)
+            grouped_regions.setdefault(height, []).append(region)
+        height_runs.extend(
+            (item_name, group, height) for height, group in grouped_regions.items()
+        )
+    return height_runs
+
+def build_turbine_hubheight_runs(shapes, turbine_column, hubheight_column, separator=';'):
+    """Build runs by pairing semicolon-separated turbines and hub heights per region."""
+    grouped_regions = {}
+    for region, turbine_value in shapes[turbine_column].items():
+        if pd.isna(turbine_value):
+            continue
+
+        turbines = [value.strip() for value in str(turbine_value).split(separator)]
+        turbines = [turbine for turbine in turbines if turbine]
+        if not turbines:
+            continue
+
+        height_value = shapes.at[region, hubheight_column]
+        if pd.isna(height_value) or not str(height_value).strip():
+            heights = [None] * len(turbines)
+        else:
+            heights = [
+                int(value.strip()) if value.strip() else None
+                for value in str(height_value).split(separator)
+            ]
+            if len(heights) != len(turbines):
+                raise ValueError(
+                    f"Region '{region}' has {len(turbines)} turbines in "
+                    f"'{turbine_column}' but {len(heights)} hub heights in "
+                    f"'{hubheight_column}'"
+                )
+
+        for turbine, height in zip(turbines, heights):
+            grouped_regions.setdefault((turbine, height), []).append(region)
+
+    return [
+        (turbine, regions, height)
+        for (turbine, height), regions in grouped_regions.items()
+    ]
+
 def build_turbine_assignment(shapes, column, separator=';'):
     """Return {turbine_name: [region names]} from a shapes column; empty cells are skipped."""
     assignment = {}
@@ -297,4 +347,3 @@ def build_turbine_assignment(shapes, column, separator=';'):
             if turbine:
                 assignment.setdefault(turbine, []).append(region)
     return assignment
-

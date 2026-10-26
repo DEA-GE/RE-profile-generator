@@ -5,7 +5,7 @@
 !.gitignore
 !config.yaml
 !cutout_download.py
-!REninja_download.py
+!REninja.py
 !timeseries.py
 !utils.py
 !input_data/

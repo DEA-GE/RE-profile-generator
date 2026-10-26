@@ -1,10 +1,9 @@
-study_region_name: TamilNadu #[mandatory][string] all files and the results folder will be named like that; will be replaced by Snakemake when looping through multiple regions
-country_code: IND #[mandatory][string: 3-letter ISO code] also needed for global wind atlas
-
-
 #--define study region----------------------------------------------------------------------
+study_region_name: Egypt #[mandatory][string] all files and the results folder will be named like that; will be replaced by Snakemake when looping through multiple regions
+country_code: EGY #[mandatory][string: 3-letter ISO code] also needed for global wind atlas
+
 study_area:
-    source: bbox #[mandatory][adm/custom/bbox]
+    source: adm #[mandatory][adm/custom/bbox]
     # adm 
     GADM_source: wb #[mandatory][string: gadm/wb/gb], gadm: https://gadm.org/maps.html, wb (worldbank) or gb (geoboundaries): https://www.arcgis.com/apps/mapviewer/index.html?layers=d1b630859ed84e92a3782fed6a612b63 (downloaded via space2stats client, which can access worldbank and geoboundaries data) or "{region_name}" when looping with Snakemake
     GADM_region_name: Egypt #[situational][string] exact name as in GADM file (NAME_{ADM_level}) or on WorldBank https://www.arcgis.com/apps/mapviewer/index.html?layers=d1b630859ed84e92a3782fed6a612b63 (NAM_{ADM_level}) or "{region_name}" when looping with Snakemake
@@ -17,19 +16,20 @@ study_area:
 
 #-- Weather data download settings -------------------------------------------------------------
 cutout_timeframe: 
-    start: 2026-01-01 # start date for weather data download in YYYY-MM-DD format
-    end: 2026-04-30 # end date for weather data download in MM-DD format
-cutout_name: "{study_region_name}_{year}_edh_corrected" # Cutout file name template "{study_region_name}-{year}-era5-edh"
+    start: 2024-06-30 # start date for weather data download in YYYY-MM-DD format
+    end: 2025-06-29 # end date for weather data download in YYYY-MM-DD format
 cutout_dir: cutouts # Local directory for cutout files 
 cutout_modules: [era5-edh, era5-corrected] # List of cutout modules to use "era5-edh", "era5-corrected"
 cutout_features: [wind, influx, temperature, "wind_corrected"] # [mandatory][wind, influx, temperature] list of ERA5 variables to download; wind energy: wind; solar energy: influx, temperature
 # "wind_corrected","wind_corrected_extrapolated","wind_shear_exp_corrected"
 
+cutout_name: "{study_region_name}_{year}_edh_corrected" # Cutout file name template "{study_region_name}-{year}-era5-edh"
+
 #-- Timeseries settings -------------------------------------------------------------
 timeseries:
     year: 2024
-    start: "{year}-01-01"
-    end: "{next_year}-01-01" # in python, last element is excluded, that is why we set the end to the first day of the next year
+    start: "{year}-06-30"
+    end: "{next_year}-06-30" # in python, last element is excluded, that is why we set the end to the first day of the next year
     drop_leap_day: True # Whether to drop February 29 in leap years
     week52: False # Output 52 full weeks from the first Monday (tail filled from the start)
     test_mode: False # Quick test mode: only compute the first week (168 hours)
@@ -44,13 +44,14 @@ available_land: # lava_scenarios/external_vector
 show_progress: False # Show atlite progress bars
 
 technologies:
-    enable: [windspeeds, onwind, solar] # List of technologies to process (onwind, offwind, windspeeds, solar)
+    enable: [windspeeds, onwind] # List of technologies to process (onwind, offwind, windspeeds, solar)
     wind_speed_variable: wnd100m_corrected # wnd100m (original ERA5) or wnd100m_corrected (ERA5 corrected by Copernicus)
     onwind:
         resource:
             method: wind
             turbine: Enercon_E101_3000kW # used for all polygons if turbine_column_name is empty
             turbine_column_name: turbine_model # [optional] column in shapes file with turbine per polygon; several turbines separated by ";"; empty cell = no timeseries for that polygon
+            hubheight_column_name: hub_height # [optional] column in shapes file with hub height per polygon; empty cells use the turbine default
             smooth: False
             add_cutout_windspeed: True
         correction_factor: 1.0
@@ -60,6 +61,7 @@ technologies:
             method: wind
             turbine: NREL_ReferenceTurbine_2020ATB_5.5MW # used for all polygons if turbine_column_name is empty
             turbine_column_name: null # [optional] see onwind
+            hubheight_column_name: null # [optional] column in shapes file with hub height per polygon; empty cells use the turbine default
             smooth: False
             add_cutout_windspeed: True
         correction_factor: 0.8855 # reduce hourly capacity to account for wake effects 0.8855
@@ -103,7 +105,6 @@ ninja:
         Goldwind GW154 6700: {hub_height: 100, shapes: [Red Sea]},
         Enercon E126 6500: {hub_height: 100, shapes: [Amont]}
     } # hub_height is optional (falls back to ninja.height); shapes without an entry use default_turbine and ninja.height; the turbine columns in the shapes file are not used for RE Ninja
-
 
 
 

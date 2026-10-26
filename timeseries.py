@@ -11,6 +11,7 @@ import yaml
 import logging
 import argparse
 from atlite.gis import ExclusionContainer
+from atlite.resource import get_windturbineconfig
 import rasterio
 from pathlib import Path
 from utils import * 
@@ -131,29 +132,41 @@ for tech_name in enabled_techs:
     correction_factor = tech_params.get("correction_factor", 1.0)
     clip_threshold = tech_params.get("clip_p_max_pu", None)
     turbine_column = base_resource.pop("turbine_column_name", None)
+    hubheight_column = base_resource.pop("hubheight_column_name", None)
+
+    if hubheight_column and hubheight_column not in shapes.columns:
+        raise KeyError(f"hubheight_column_name '{hubheight_column}' not found in shapes file")
 
     method = base_resource.pop("method")
     func = getattr(cutout, method)
     base_resource["show_progress"] = show_progress
 
-    # Build runs: (turbine/panel name, regions to compute); regions None = all
+    # Build runs: (turbine/panel name, regions to compute, optional hub height)
     if turbine_column:
         if turbine_column not in shapes.columns:
             raise KeyError(f"turbine_column_name '{turbine_column}' not found in shapes file")
         assignment = build_turbine_assignment(shapes, turbine_column)
         assignments[tech_name] = assignment
-        runs = list(assignment.items())
+        if hubheight_column:
+            runs = build_turbine_hubheight_runs(
+                shapes, turbine_column, hubheight_column
+            )
+        else:
+            runs = [(name, regions, None) for name, regions in assignment.items()]
         skipped = int(shapes[turbine_column].isna().sum())
         logging.info(f"    Turbines from column '{turbine_column}': {list(assignment)} ({skipped} polygons without turbine skipped)")
     elif tech_name == "windspeeds":
-        runs = [(None, None)]
+        runs = [(None, None, None)]
     elif method == "pv":
-        runs = [(base_resource.get("panel"), None)]
+        runs = [(base_resource.get("panel"), None, None)]
     else:
-        runs = [(base_resource.get("turbine"), None)]
+        runs = [(base_resource.get("turbine"), None, None)]
+
+    if hubheight_column and not turbine_column:
+        runs = split_runs_by_hub_height(runs, shapes, hubheight_column)
 
     frames = []
-    for item_name, run_regions in runs:
+    for item_name, run_regions, hub_height_override in runs:
         resource = base_resource.copy()
         if method == "wind" and tech_name != "windspeeds":
             resource["turbine"] = item_name
@@ -163,6 +176,8 @@ for tech_name in enabled_techs:
         # Load custom or atlite turbine/panel files
         if resource.get("turbine") is not None:
             resource["turbine"] = load_turbine_or_panel(resource["turbine"], dirname)
+            if hub_height_override is not None:
+                resource["turbine"] = {**get_windturbineconfig(resource["turbine"]), "hub_height": hub_height_override}
         if resource.get("panel") is not None:
             resource["panel"] = load_turbine_or_panel(resource["panel"], dirname)
 
