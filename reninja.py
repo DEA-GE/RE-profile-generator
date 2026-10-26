@@ -119,6 +119,10 @@ def get_wind_data(lat, lon, turbine, date_from, date_to, capacity=1.0, height=10
 
 def to_api_turbine_name(name):
     """Convert 'Nordex.N43.600' (power-curve name) to the API name 'Nordex N43 600'."""
+    decimal_model = re.fullmatch(r"([^.]+)\.(\d+)\.(\d+)", name)
+    if decimal_model:
+        return f"{decimal_model.group(1)} {decimal_model.group(2)}.{decimal_model.group(3)}"
+
     match = re.fullmatch(r"([^.]+)\.(.+)\.(\d+)", name)
     if match:
         return " ".join(match.groups())
