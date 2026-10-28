@@ -71,7 +71,7 @@ if ts_config["test_mode"]:
 date_from = sns[0].strftime("%Y-%m-%d")
 date_to = sns[-1].strftime("%Y-%m-%d")
 
-output_dir = os.path.join(dirname, "output", "REninja")
+output_dir = os.path.join(dirname, "output")
 os.makedirs(output_dir, exist_ok=True)
 
 
