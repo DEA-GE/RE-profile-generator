@@ -3,7 +3,7 @@
 
 # only track these
 !.gitignore
-!config.yaml
+!config_template.yaml
 !cutout_download.py
 !REninja.py
 !timeseries.py
