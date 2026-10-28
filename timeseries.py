@@ -253,7 +253,7 @@ for tech_name in enabled_techs:
 logging.info("Done — all profiles generated.")
 
 # --- Save technologies dictionary, shapes filename, and cutout name to a text file ---
-tech_file = os.path.join(output_dir, f"technologies_{year}.txt")
+tech_file = os.path.join(output_dir, f"technologies_{year}_{study_region_name}.txt")
 with open(tech_file, "w", encoding="utf-8") as f:
     f.write(f"shapes_file: {os.path.basename(shapes_path)}\n")
     f.write(f"cutout_file: {os.path.basename(cutout_path)}\n\n")
