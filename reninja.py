@@ -48,11 +48,12 @@ s.headers = {'Authorization': 'Token ' + token}
 # --- Load region shapes ---
 shapes_path = os.path.join(dirname, CONFIG["shapes_filepath"].format(study_region_name=study_region_name))
 logging.info(f"Loading shapes from {shapes_path}")
-shapes = gpd.read_file(shapes_path)
-shapes = shapes.set_index(CONFIG.get("shapes_name_column", "name")).rename_axis("region")
+shapes = gpd.read_file(shapes_path).to_crs(4326)
+shape_name_column = CONFIG.get("shapes_name_column", "name")
+shapes.geometry = shapes.geometry.representative_point()
+shapes = shapes.set_index(shape_name_column, drop=False).rename_axis("region")
 # one point per polygon, guaranteed to lie inside it
-points = shapes.to_crs(4326).geometry.representative_point()
-coords = {name: (pt.y, pt.x) for name, pt in points.items()}
+coords = {name: (pt.y, pt.x) for name, pt in shapes.geometry.items()}
 logging.info(f"  {len(coords)} regions loaded")
 
 # --- Build time snapshots ---
@@ -73,6 +74,10 @@ date_to = sns[-1].strftime("%Y-%m-%d")
 
 output_dir = os.path.join(dirname, "output")
 os.makedirs(output_dir, exist_ok=True)
+shapes.reset_index(drop=True).to_file(
+    os.path.join(output_dir, f"representative_points_{study_region_name}.geojson"),
+    driver="GeoJSON",
+)
 
 
 def _request(endpoint, args):
