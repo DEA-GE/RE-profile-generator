@@ -39,6 +39,16 @@ modules before downloading a cutout.
 
 
 
+### Weather data and wind power curves
+
+| Workflow | Wind weather data | Solar weather data | Wind power curves |
+|---|---|---|---|
+| **atlite** | ERA5 or corrected ERA5 | ERA5, corrected ERA5, or SARAH (globally) | atlite and Renewables.ninja |
+| **REninja** | MERRA-2 (corrected for Europe) | MERRA-2 or SARAH (Europe only) | Renewables.ninja only |
+
+Renewables.ninja power curves can be used with either workflow; atlite power
+curves can only be used with atlite.
+
 ### Data via atlite
 
 Run commands from the repository root, in order:
