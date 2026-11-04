@@ -12,7 +12,16 @@ conda env create -f env.yaml
 ```
 
 ```terminal
-conda activate re-profile-generator
+conda activate re-profiles
+```
+
+To access the weather data from Earth Data Hub or Copernicus, follow the instructions [here](https://atlite.readthedocs.io/en/master/installation.html#:~:text=Earth%20Data%20Hub%20(recommended)) to obtain your API key.
+
+To also retrieve profiles from Renewables.ninja, create an account on renewables.ninja, go to your profile and copy the API Token. Create `REninjaAPI.yaml` in
+the repository root and paste your API token:
+
+```yaml
+token: YOUR_RENEWABLES_NINJA_TOKEN
 ```
 
 Copy `config_template.yaml` and rename the copy to **`config.yaml`**. 
@@ -26,7 +35,11 @@ entire time-series period. The shape file must be available at the configured
 column. Configure any credentials required by the selected atlite weather-data
 modules before downloading a cutout.
 
+
+
 ## Run
+
+### Data via atlite
 
 Run commands from the repository root, in order:
 
@@ -41,14 +54,7 @@ python timeseries.py
 The first command downloads and saves the weather cutout under `cutouts/`. The
 second computes profiles from that cutout and the configured shape file.
 
-To also retrieve profiles from Renewables.ninja, create an account on renewables.ninja, go to your profile and copy the API Token. Create `REninjaAPI.yaml` in
-the repository root and paste your API token:
-
-```yaml
-token: YOUR_RENEWABLES_NINJA_TOKEN
-```
-
-Then run:
+### Data via REninja
 
 ```terminal
 python reninja.py
