@@ -1,24 +1,26 @@
 # Renewable energy profile generator
 
-This tool creates hourly wind and solar generation profiles from ERA5 weather
-data using [atlite](https://atlite.readthedocs.io/). It can also download
-profiles for the same study regions from the Renewables.ninja API.
+This tool creates hourly wind and solar generation profiles from weather
+data using [atlite](https://atlite.readthedocs.io/) and [Renewables.ninja API](https://www.renewables.ninja/).
 
 ## Setup
 
 From the repository root, create and activate the Conda environment:
 
-```powershell
+```terminal
 conda env create -f env.yaml
-conda activate re-profile-generator
 ```
 
-Copy `config_template.yaml` and rename the copy to **`config.yaml`**. For
-example, in PowerShell:
-
-```powershell
-Copy-Item config_template.yaml config.yaml
+```terminal
+conda activate re-profiles
 ```
+
+To access the weather data you need have access to the data providers via APIs:
+- via atlite from Earth Data Hub or Copernicus, follow the instructions [here](https://atlite.readthedocs.io/en/master/installation.html#:~:text=Earth%20Data%20Hub%20(recommended)) to obtain your API key.
+- [Renewables.ninja](https://www.renewables.ninja/): create an account on renewables.ninja, go to your profile and copy the API Token. Create `REninjaAPI.yaml` in
+the repository root and paste your API token in the structure: `token: YOUR_RENEWABLES_NINJA_TOKEN`
+
+Copy `config_template.yaml` and rename the copy to **`config.yaml`**. 
 
 Edit `config.yaml` for the study region, weather-data period, input shapes,
 and technologies to process. Set `timeseries.start` and `timeseries.end` as
@@ -29,28 +31,28 @@ entire time-series period. The shape file must be available at the configured
 column. Configure any credentials required by the selected atlite weather-data
 modules before downloading a cutout.
 
+
+
 ## Run
+
+### Data via atlite
 
 Run commands from the repository root, in order:
 
-```powershell
+```terminal
 python cutout_download.py
+```
+
+```terminal
 python timeseries.py
 ```
 
 The first command downloads and saves the weather cutout under `cutouts/`. The
 second computes profiles from that cutout and the configured shape file.
 
-To also retrieve profiles from Renewables.ninja, create `REninjaAPI.yaml` in
-the repository root with your API token:
+### Data via REninja
 
-```yaml
-token: YOUR_RENEWABLES_NINJA_TOKEN
-```
-
-Then run:
-
-```powershell
+```terminal
 python reninja.py
 ```
 
