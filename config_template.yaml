@@ -1,9 +1,9 @@
 #--define study region----------------------------------------------------------------------
-study_region_name: Odense #[mandatory][string] 
+study_region_name: Denmark #[mandatory][string] 
 country_code: DNK #[mandatory][string: 3-letter ISO code] 
 
 study_area:
-    source: bbox #[mandatory][adm/custom/bbox] select one method
+    source: adm #[mandatory][adm/custom/bbox] select one method
     # adm 
     GADM_source: wb #[situational][gadm/wb/gb], gadm: https://gadm.org/maps.html, wb (worldbank) or gb (geoboundaries): https://www.arcgis.com/apps/mapviewer/index.html?layers=d1b630859ed84e92a3782fed6a612b63 (downloaded via space2stats client, which can access worldbank and geoboundaries data) 
     GADM_region_name: Denmark #[situational][string] exact name as in GADM file (NAME_{ADM_level}) or on WorldBank https://www.arcgis.com/apps/mapviewer/index.html?layers=d1b630859ed84e92a3782fed6a612b63 (NAM_{ADM_level}) 
@@ -23,7 +23,7 @@ cutout_modules: [era5-edh] # List of cutout modules to use "era5-edh", "era5-cor
 cutout_features: [wind, influx, temperature] # [mandatory][wind, influx, temperature] list of ERA5 variables to download; wind energy: wind; solar energy: influx, temperature
 # "wind_corrected","wind_corrected_extrapolated","wind_shear_exp_corrected"
 
-cutout_name: "{study_region_name}_{year}_edh_corrected" # Cutout file name template 
+cutout_name: "{study_region_name}_{year}_edh" # Cutout file name template 
 
 #-- Timeseries settings -------------------------------------------------------------
 timeseries:
@@ -33,8 +33,8 @@ timeseries:
     week52: False # Output 52 full weeks from the first Monday (tail filled from the start)
     test_mode: False # Quick test mode: only compute the first week (168 hours)
 
-shapes_filepath: input_data/windfarmsKEN.geojson # Path to a GeoJSON file with region polygons
-shapes_name_column: wind_farm #  Name of the column in the GeoJSON that identifies each region 
+shapes_filepath: input_data/windfarmsDNK.geojson # Path to a GeoJSON file with region polygons
+shapes_name_column: name #  Name of the column in the GeoJSON that identifies each region 
 
 available_land: # lava_scenarios/external_vector
     enable: False
