@@ -16,35 +16,35 @@ study_area:
 
 #-- Weather data download settings -------------------------------------------------------------
 cutout_timeframe: 
-    start: 2024-01-01 # start date for weather data download in YYYY-MM-DD format
-    end: 2024-12-31 # end date for weather data download in YYYY-MM-DD format
-cutout_dir: cutouts # Local directory for cutout files 
-cutout_modules: [era5-edh] # List of cutout modules to use "era5-edh", "era5-corrected"
-cutout_features: [wind, influx, temperature] # [mandatory][wind, influx, temperature] list of ERA5 variables to download; wind energy: wind; solar energy: influx, temperature
+    start: 2024-01-01 #[mandatory][YYYY-MM-DD] start date for weather data download 
+    end: 2024-12-31 #[mandatory][YYYY-MM-DD] end date for weather data download 
+cutout_dir: cutouts #[mandatory][string] Local directory for cutout files 
+cutout_modules: [era5-edh] #[mandatory][sarah, era5-edh, era5-corrected] List of cutout modules to use 
+cutout_features: [wind, influx, temperature] #[mandatory][wind, influx, temperature] list of ERA5 variables to download; wind energy: wind; solar energy: influx, temperature
 # "wind_corrected","wind_corrected_extrapolated","wind_shear_exp_corrected"
 
-cutout_name: "{study_region_name}_{year}_edh" # Cutout file name template 
+cutout_name: "{study_region_name}_{year}_edh" #[mandatory][string] Cutout file name template 
 
 #-- Timeseries settings -------------------------------------------------------------
 timeseries:
-    start: 2024-01-01
-    end: 2024-12-31 # Both start and end dates are inclusive
-    drop_leap_day: True # Whether to drop February 29 in leap years
-    week52: False # Output 52 full weeks from the first Monday (tail filled from the start)
-    test_mode: False # Quick test mode: only compute the first week (168 hours)
+    start: 2024-01-01 #[mandatory][YYYY-MM-DD]
+    end: 2024-12-31 #[mandatory][YYYY-MM-DD] Both start and end dates are inclusive
+    drop_leap_day: True #[mandatory][True/False] Whether to drop February 29 in leap years
+    week52: False #[mandatory][True/False] Output 52 full weeks from the first Monday (tail filled from the start)
+    test_mode: False #[mandatory][True/False] Quick test mode: only compute the first week (168 hours)
 
-shapes_filepath: input_data/windfarmsDNK.geojson # Path to a GeoJSON file with region polygons
-shapes_name_column: name #  Name of the column in the GeoJSON that identifies each region 
+shapes_filepath: input_data/windfarmsDNK.geojson #[mandatory][string] Path to a GeoJSON file with region polygons
+shapes_name_column: name #[mandatory][string] Name of the column in the GeoJSON that identifies each region 
 
 available_land: # lava_scenarios/external_vector
     enable: False
     raster: data/Odense_solar_ref_available_land.tif
 
-show_progress: False # Show atlite progress bars
+show_progress: False #[mandatory][True/False] Show atlite progress bars
 
 technologies:
     enable: [windspeeds, onwind] # List of technologies to process (onwind, offwind, windspeeds, solar)
-    wind_speed_variable: wnd100m # wnd100m (original ERA5) or wnd100m_corrected (ERA5 corrected by Copernicus)
+    wind_speed_variable: wnd100m # [mandatory][wnd100m/wnd100m_corrected]
     onwind:
         resource:
             method: wind
