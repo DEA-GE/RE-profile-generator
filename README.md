@@ -37,6 +37,12 @@ column. Configure any credentials required by the selected atlite weather-data
 modules before downloading a cutout.
 
 
+### Weather data sources and workflow overview
+
+| Workflow | Wind weather data | Solar weather data | Wind power curves |
+|---|---|---|---|
+| **atlite** | ERA5 or corrected ERA5 | ERA5, corrected ERA5, or SARAH (globally) | atlite and Renewables.ninja |
+| **REninja** | MERRA-2 (corrected for Europe) | MERRA-2 or SARAH (Europe only) | Renewables.ninja only |
 
 
 ### Data via atlite
