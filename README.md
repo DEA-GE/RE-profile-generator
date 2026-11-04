@@ -1,8 +1,7 @@
 # Renewable energy profile generator
 
-This tool creates hourly wind and solar generation profiles from ERA5 weather
-data using [atlite](https://atlite.readthedocs.io/). It can also download
-profiles for the same study regions from the Renewables.ninja API.
+This tool creates hourly wind and solar generation profiles from weather
+data using [atlite](https://atlite.readthedocs.io/) and [Renewables.ninja API](https://www.renewables.ninja/).
 
 ## Setup
 
@@ -10,15 +9,13 @@ From the repository root, create and activate the Conda environment:
 
 ```powershell
 conda env create -f env.yaml
+```
+
+```powershell
 conda activate re-profile-generator
 ```
 
-Copy `config_template.yaml` and rename the copy to **`config.yaml`**. For
-example, in PowerShell:
-
-```powershell
-Copy-Item config_template.yaml config.yaml
-```
+Copy `config_template.yaml` and rename the copy to **`config.yaml`**. 
 
 Edit `config.yaml` for the study region, weather-data period, input shapes,
 and technologies to process. Set `timeseries.start` and `timeseries.end` as
@@ -35,14 +32,17 @@ Run commands from the repository root, in order:
 
 ```powershell
 python cutout_download.py
+```
+
+```powershell
 python timeseries.py
 ```
 
 The first command downloads and saves the weather cutout under `cutouts/`. The
 second computes profiles from that cutout and the configured shape file.
 
-To also retrieve profiles from Renewables.ninja, create `REninjaAPI.yaml` in
-the repository root with your API token:
+To also retrieve profiles from Renewables.ninja, create an account on renewables.ninja, go to your profile and copy the API Token. Create `REninjaAPI.yaml` in
+the repository root and paste your API token:
 
 ```yaml
 token: YOUR_RENEWABLES_NINJA_TOKEN
