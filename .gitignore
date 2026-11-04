@@ -12,3 +12,5 @@
 !utils.py
 !input_data/
 !input_data/.gitkeep
+!input_data/windfarmsDNK.geojson
+!input_data/ninja_turbines_power.csv

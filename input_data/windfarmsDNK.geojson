@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "windfarmsDNK",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "fid": 1, "name": "North", "turbine_model": "Nordex.N131.3300", "hub_height": 100 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 9.891325026687017, 57.204835813978143 ], [ 9.903795232597924, 57.20762765112238 ], [ 9.90854135574312, 57.194785200258906 ], [ 9.895978088594072, 57.191993363114676 ], [ 9.891325026687017, 57.204835813978143 ] ] ] } },
+{ "type": "Feature", "properties": { "fid": 2, "name": "Odense", "turbine_model": "Enercon_E101_3000kW", "hub_height": 120 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 10.038547905426235, 55.533735160678503 ], [ 10.267850796205895, 55.551602918401592 ], [ 10.263383856775121, 55.182335925457728 ], [ 9.947720137000525, 55.237428178437256 ], [ 10.038547905426235, 55.533735160678503 ] ] ] } }
+]
+}
