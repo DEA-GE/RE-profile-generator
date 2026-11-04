@@ -22,18 +22,22 @@ the repository root and paste your API token in the structure: `token: YOUR_RENE
 
 Copy `config_template.yaml` and rename the copy to **`config.yaml`**. 
 
+
+## Run
+### Configuration
+The tool reads a .geojson file with polygons for renewable energy areas from the input folder (see example `windfarmsDNK.geojson`). Every area should have a name. If wind profiles are generated, it is handy to also have the hub height and turbines model in the attribute table of the polygon file. All turbine models available in atlite and REninja can be selected. For REninja turbines see `input/ninja_turbines_power.csv`.
+
 Edit `config.yaml` for the study region, weather-data period, input shapes,
 and technologies to process. Set `timeseries.start` and `timeseries.end` as
 `YYYY-MM-DD` dates, just like `cutout_timeframe.start` and
 `cutout_timeframe.end`; both dates are included, and the cutout must cover the
-entire time-series period. The shape file must be available at the configured
-`shapes_filepath`, and `shapes_name_column` must name its region identifier
+entire time-series period. The polygons file must be available at the configured
+`shapes_filepath`, and `shapes_name_column` must name its area identifier
 column. Configure any credentials required by the selected atlite weather-data
 modules before downloading a cutout.
 
 
 
-## Run
 
 ### Data via atlite
 
