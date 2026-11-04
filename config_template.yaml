@@ -44,7 +44,7 @@ show_progress: False # Show atlite progress bars
 
 technologies:
     enable: [windspeeds, onwind] # List of technologies to process (onwind, offwind, windspeeds, solar)
-    wind_speed_variable: wnd100m_corrected # wnd100m (original ERA5) or wnd100m_corrected (ERA5 corrected by Copernicus)
+    wind_speed_variable: wnd100m # wnd100m (original ERA5) or wnd100m_corrected (ERA5 corrected by Copernicus)
     onwind:
         resource:
             method: wind
