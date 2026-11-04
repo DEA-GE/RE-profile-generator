@@ -63,10 +63,6 @@ technology (`<technology>_<year>_<region>.csv`) and a text file recording the
 technology configuration and source files. The Renewables.ninja workflow writes
 CSV files with an `_REninja` suffix and a GeoJSON of representative points.
 
-## Configuration highlights
+## Notes
 
-`config.yaml` controls the study area, cutout dates and modules, shape-file
-path, time-series dates, enabled technologies, and technology resource
-settings. The year in output filenames is derived from `timeseries.start`.
-Use `timeseries.test_mode: True` to calculate only the first 168 hours while
-testing. `timeseries.week52` controls whether output is converted to 52 weeks.
+- use [this web viewer](https://jome1.github.io/ERA5_webapp/) in order to inspect cutouts 
