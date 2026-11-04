@@ -1,6 +1,7 @@
 import atlite
 import os
 import logging
+import pandas as pd
 import yaml
 from utils import *
 
@@ -20,6 +21,10 @@ custom_polygon_path = os.path.join("input_data", custom_filename) if custom_file
 cutout_start = CONFIG["cutout_timeframe"]["start"]
 cutout_end = CONFIG["cutout_timeframe"]["end"]
 study_region_name = CONFIG["study_region_name"]
+cutout_year = str(cutout_start)[:4]
+cutout_end_inclusive = (
+    pd.Timestamp(cutout_end) + pd.Timedelta(days=1) - pd.Timedelta(hours=1)
+)
 
 
 region = get_study_area_polygon(source=CONFIG["study_area"].get("source"),
@@ -50,15 +55,13 @@ print(
 cutout = atlite.Cutout(
     path=os.path.join(
         cutouts_dir,
-        f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, year=str(CONFIG["cutout_timeframe"]["start"])[:4])}.nc",
+        f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, year=cutout_year)}.nc",
     ),
     module=CONFIG["cutout_modules"],
     x=slice(bounds[0], bounds[2]),
     y=slice(bounds[1], bounds[3]),
     #       time=str(weather_year)
-    time=slice(
-        f"{cutout_start}", f"{cutout_end}"
-    ),
+    time=slice(f"{cutout_start}", cutout_end_inclusive),
 )
 
 # download

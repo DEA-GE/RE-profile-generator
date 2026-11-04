@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO)
 dirname = os.getcwd()
 
 # --- Load timeseries settings from CONFIG ---
-with open(os.path.join(dirname, "CONFIG.yaml"), "r", encoding="utf-8") as f:
+with open(os.path.join(dirname, "config.yaml"), "r", encoding="utf-8") as f:
     CONFIG = yaml.load(f, Loader=yaml.FullLoader)
 
 # load from CONFIG
@@ -47,9 +47,10 @@ logging.info(f"  {len(regions)} regions loaded")
 # --- Build time snapshots ---
 snapshots_CONFIG = CONFIG["timeseries"]
 year = snapshots_CONFIG["year"]
+end_exclusive = pd.Timestamp(snapshots_CONFIG["end"]) + pd.Timedelta(days=1)
 sns = pd.date_range(
-    start=snapshots_CONFIG["start"].format(year=year, next_year=year + 1),
-    end=snapshots_CONFIG["end"].format(year=year, next_year=year + 1),
+    start=snapshots_CONFIG["start"],
+    end=end_exclusive,
     freq="h",
     inclusive="left",
 )

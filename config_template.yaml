@@ -28,8 +28,8 @@ cutout_name: "{study_region_name}_{year}_edh_corrected" # Cutout file name templ
 #-- Timeseries settings -------------------------------------------------------------
 timeseries:
     year: 2024
-    start: "{year}-08-12"
-    end: "{next_year}-08-12" # in python, last element is excluded, that is why we set the end to the first day of the next year
+    start: 2024-08-12
+    end: 2025-08-11 # Both start and end dates are inclusive
     drop_leap_day: True # Whether to drop February 29 in leap years
     week52: False # Output 52 full weeks from the first Monday (tail filled from the start)
     test_mode: False # Quick test mode: only compute the first week (168 hours)
@@ -96,7 +96,6 @@ ninja:
     height: 100 # default wind hub height in m (used when hubheight_column_name is empty or the cell is blank)
     tilt: 35 # solar, used if technologies.solar.resource.slope is not set
     azim: 180 # solar, used if technologies.solar.resource.azimuth is not set
-
 
 
 

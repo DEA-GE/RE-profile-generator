@@ -59,9 +59,10 @@ logging.info(f"  {len(coords)} regions loaded")
 # --- Build time snapshots ---
 ts_config = CONFIG["timeseries"]
 year = ts_config["year"]
+end_exclusive = pd.Timestamp(ts_config["end"]) + pd.Timedelta(days=1)
 sns = pd.date_range(
-    start=ts_config["start"].format(year=year, next_year=year + 1),
-    end=ts_config["end"].format(year=year, next_year=year + 1),
+    start=ts_config["start"],
+    end=end_exclusive,
     freq="h",
     inclusive="left",
 )
