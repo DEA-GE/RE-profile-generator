@@ -19,8 +19,8 @@ cutout_timeframe:
     start: 2024-01-01 # start date for weather data download in YYYY-MM-DD format
     end: 2024-12-31 # end date for weather data download in YYYY-MM-DD format
 cutout_dir: cutouts # Local directory for cutout files 
-cutout_modules: [era5-edh, era5-corrected] # List of cutout modules to use "era5-edh", "era5-corrected"
-cutout_features: [wind, "wind_corrected"] # [mandatory][wind, influx, temperature] list of ERA5 variables to download; wind energy: wind; solar energy: influx, temperature
+cutout_modules: [era5-edh] # List of cutout modules to use "era5-edh", "era5-corrected"
+cutout_features: [wind, influx, temperature] # [mandatory][wind, influx, temperature] list of ERA5 variables to download; wind energy: wind; solar energy: influx, temperature
 # "wind_corrected","wind_corrected_extrapolated","wind_shear_exp_corrected"
 
 cutout_name: "{study_region_name}_{year}_edh_corrected" # Cutout file name template 
