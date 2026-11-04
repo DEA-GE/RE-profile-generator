@@ -15,14 +15,10 @@ conda env create -f env.yaml
 conda activate re-profiles
 ```
 
-To access the weather data from Earth Data Hub or Copernicus, follow the instructions [here](https://atlite.readthedocs.io/en/master/installation.html#:~:text=Earth%20Data%20Hub%20(recommended)) to obtain your API key.
-
-To also retrieve profiles from Renewables.ninja, create an account on renewables.ninja, go to your profile and copy the API Token. Create `REninjaAPI.yaml` in
-the repository root and paste your API token:
-
-```yaml
-token: YOUR_RENEWABLES_NINJA_TOKEN
-```
+To access the weather data you need have access to the data providers via APIs:
+- via atlite from Earth Data Hub or Copernicus, follow the instructions [here](https://atlite.readthedocs.io/en/master/installation.html#:~:text=Earth%20Data%20Hub%20(recommended)) to obtain your API key.
+- [Renewables.ninja](https://www.renewables.ninja/): create an account on renewables.ninja, go to your profile and copy the API Token. Create `REninjaAPI.yaml` in
+the repository root and paste your API token in the structure: `token: YOUR_RENEWABLES_NINJA_TOKEN`
 
 Copy `config_template.yaml` and rename the copy to **`config.yaml`**. 
 
