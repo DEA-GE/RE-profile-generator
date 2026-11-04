@@ -7,11 +7,11 @@ data using [atlite](https://atlite.readthedocs.io/) and [Renewables.ninja API](h
 
 From the repository root, create and activate the Conda environment:
 
-```powershell
+```terminal
 conda env create -f env.yaml
 ```
 
-```powershell
+```terminal
 conda activate re-profile-generator
 ```
 
@@ -30,11 +30,11 @@ modules before downloading a cutout.
 
 Run commands from the repository root, in order:
 
-```powershell
+```terminal
 python cutout_download.py
 ```
 
-```powershell
+```terminal
 python timeseries.py
 ```
 
@@ -50,7 +50,7 @@ token: YOUR_RENEWABLES_NINJA_TOKEN
 
 Then run:
 
-```powershell
+```terminal
 python reninja.py
 ```
 
