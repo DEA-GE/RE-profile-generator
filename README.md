@@ -64,6 +64,7 @@ CSV files with an `_REninja` suffix and a GeoJSON of representative points.
 ## Configuration highlights
 
 `config.yaml` controls the study area, cutout dates and modules, shape-file
-path, time-series year, enabled technologies, and technology resource settings.
+path, time-series dates, enabled technologies, and technology resource
+settings. The year in output filenames is derived from `timeseries.start`.
 Use `timeseries.test_mode: True` to calculate only the first 168 hours while
 testing. `timeseries.week52` controls whether output is converted to 52 weeks.
