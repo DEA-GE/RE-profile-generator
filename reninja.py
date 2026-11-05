@@ -81,7 +81,7 @@ shapes.reset_index(drop=True).to_file(
 )
 
 
-def _request(endpoint, args):
+def _request(endpoint, args, column="electricity"):
     # Wait 1s before making the request
     time.sleep(1)
     r = s.get(api_base + endpoint, params=args)
@@ -89,7 +89,7 @@ def _request(endpoint, args):
         raise RuntimeError(f"RE Ninja request failed ({r.status_code}): {r.text[:300]}")
     parsed_response = json.loads(r.text)
     data = pd.read_json(StringIO(json.dumps(parsed_response['data'])), orient='index')
-    return data["electricity"], parsed_response['metadata']
+    return data[column], parsed_response['metadata']
 
 
 def get_solar_data(lat, lon, date_from, date_to, dataset='merra2', capacity=1, system_loss=0.1, tracking=0, tilt=35, azim=180):
@@ -109,7 +109,7 @@ def get_solar_data(lat, lon, date_from, date_to, dataset='merra2', capacity=1, s
     return _request('data/pv', args)
 
 
-def get_wind_data(lat, lon, turbine, date_from, date_to, capacity=1.0, height=100):
+def get_wind_data(lat, lon, turbine, date_from, date_to, capacity=1.0, height=100, raw=False):
     args = {
         'lat': lat,
         'lon': lon,
@@ -120,7 +120,9 @@ def get_wind_data(lat, lon, turbine, date_from, date_to, capacity=1.0, height=10
         'turbine': turbine,
         'format': 'json'
     }
-    return _request('data/wind', args)
+    if raw:
+        args['raw'] = 'true'
+    return _request('data/wind', args, column="wind_speed" if raw else "electricity")
 
 
 def to_api_turbine_name(name):
@@ -144,12 +146,14 @@ for tech_name in enabled_techs:
     clip_threshold = tech_params.get("clip_p_max_pu", None)
     logging.info(f"  Technology: {tech_name}")
 
-    if tech_name == "windspeeds":
-        logging.warning("    'windspeeds' is not available from RE Ninja, skipped")
-        continue
-
+    raw_windspeeds = tech_name == "windspeeds"
+    if raw_windspeeds:
+        print("Original MERRA-2 windspeeds are at levels 10 m and 50 m. Here, the output is at 100 m to make it comparable with ERA5.")
+        # the wind speed does not depend on the turbine; always delivered at 100 m
+        runs = [("Vestas V90 2000", None, 100)]
+        correction_factor, clip_threshold = 1.0, None
     # runs: (turbine/panel name, regions, hub height override), built as in timeseries.py
-    if method == "wind":
+    elif method == "wind":
         turbine_column = resource.get("turbine_column_name")
         hubheight_column = resource.get("hubheight_column_name")
         for column in (turbine_column, hubheight_column):
@@ -179,6 +183,7 @@ for tech_name in enabled_techs:
                 series, _ = get_wind_data(
                     lat, lon, to_api_turbine_name(str(item_name)), date_from, date_to,
                     capacity=capacity, height=hub_height if run_height is None else run_height,
+                    raw=raw_windspeeds,
                 )
             else:
                 tracking = resource.get("tracking")
@@ -194,7 +199,8 @@ for tech_name in enabled_techs:
             series = series.reindex(sns)
             if series.isna().any():
                 logging.warning(f"    {region}: {int(series.isna().sum())} timesteps missing in RE Ninja data")
-            frames.append(pd.DataFrame({(region, str(item_name)): series}))
+            second_row = "windspeeds" if raw_windspeeds else str(item_name)
+            frames.append(pd.DataFrame({(region, second_row): series}))
 
     df = pd.concat(frames, axis=1)
     df.columns = pd.MultiIndex.from_tuples(df.columns)

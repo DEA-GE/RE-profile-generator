@@ -36,7 +36,15 @@ entire time-series period. The polygons file must be available at the configured
 column. Configure any credentials required by the selected atlite weather-data
 modules before downloading a cutout.
 
+Select the technologies to be processed (onwind, offwind, windspeeds, solar) in the list under `timeseries.enable` in the config file.
 
+
+### Weather data sources and workflow overview
+
+| Workflow | Wind weather data | Solar weather data | Wind power curves |
+|---|---|---|---|
+| **atlite** | ERA5 or corrected ERA5 | ERA5, corrected ERA5, or SARAH (globally) | [atlite](https://github.com/PyPSA/atlite/tree/master/atlite/resources/windturbine) and [Renewables.ninja](https://github.com/DEA-GE/RE-profile-generator/blob/main/input_data/ninja_turbines_power.csv) |
+| **REninja** | MERRA-2 (corrected for Europe) | MERRA-2 or SARAH (Europe only) | [Renewables.ninja](https://github.com/DEA-GE/RE-profile-generator/blob/main/input_data/ninja_turbines_power.csv) only |
 
 
 ### Data via atlite
