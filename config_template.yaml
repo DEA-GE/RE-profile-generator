@@ -87,7 +87,7 @@ technologies:
 
 
 
-# --- RE Ninja (used by REninja_download.py; all keys optional, values below are the defaults) ---
+# --- RE Ninja (used by reninja.py; all keys optional, values below are the defaults) ---
 ninja:
     dataset: merra2 # solar weather dataset
     capacity: 1 # kW, 1 gives capacity factors
