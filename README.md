@@ -43,8 +43,8 @@ Select the technologies to be processed (onwind, offwind, windspeeds, solar) in 
 
 | Workflow | Wind weather data | Solar weather data | Wind power curves |
 |---|---|---|---|
-| **atlite** | ERA5 or corrected ERA5 | ERA5, corrected ERA5, or SARAH (globally) | atlite and Renewables.ninja |
-| **REninja** | MERRA-2 (corrected for Europe) | MERRA-2 or SARAH (Europe only) | Renewables.ninja only |
+| **atlite** | ERA5 or corrected ERA5 | ERA5, corrected ERA5, or SARAH (globally) | [atlite](https://github.com/PyPSA/atlite/tree/master/atlite/resources/windturbine) and [Renewables.ninja](https://github.com/DEA-GE/RE-profile-generator/blob/main/input_data/ninja_turbines_power.csv) |
+| **REninja** | MERRA-2 (corrected for Europe) | MERRA-2 or SARAH (Europe only) | [Renewables.ninja](https://github.com/DEA-GE/RE-profile-generator/blob/main/input_data/ninja_turbines_power.csv) only |
 
 
 ### Data via atlite
