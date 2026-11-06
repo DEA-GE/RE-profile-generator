@@ -77,4 +77,5 @@ CSV files with an `_REninja` suffix and a GeoJSON of representative points.
 
 ## Notes
 
-- use [this web viewer](https://jome1.github.io/ERA5_webapp/) in order to inspect cutouts 
+- [Web Viewer](https://jome1.github.io/ERA5_webapp/) for inspecting cutouts
+- [Time Series Explorer](https://www.unditas.com/) for inspecting RE profiles (.csv files)
