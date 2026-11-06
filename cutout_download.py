@@ -58,6 +58,7 @@ cutout = atlite.Cutout(
         f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, year=cutout_year)}.nc",
     ),
     module=CONFIG["cutout_modules"],
+    sarah_from_api=CONFIG.get("sarah_from_api", False),
     x=slice(bounds[0], bounds[2]),
     y=slice(bounds[1], bounds[3]),
     #       time=str(weather_year)
