@@ -22,6 +22,7 @@ cutout_start = CONFIG["cutout_timeframe"]["start"]
 cutout_end = CONFIG["cutout_timeframe"]["end"]
 study_region_name = CONFIG["study_region_name"]
 cutout_year = str(cutout_start)[:4]
+cutout_modules = "_".join(CONFIG["cutout_modules"])
 cutout_end_inclusive = (
     pd.Timestamp(cutout_end) + pd.Timedelta(days=1) - pd.Timedelta(hours=1)
 )
@@ -55,7 +56,7 @@ print(
 cutout = atlite.Cutout(
     path=os.path.join(
         cutouts_dir,
-        f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, year=cutout_year)}.nc",
+        f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, year=cutout_year, modules=cutout_modules)}.nc",
     ),
     module=CONFIG["cutout_modules"],
     x=slice(bounds[0], bounds[2]),

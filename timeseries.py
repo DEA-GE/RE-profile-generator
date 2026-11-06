@@ -47,6 +47,7 @@ logging.info(f"  {len(regions)} regions loaded")
 # --- Build time snapshots ---
 snapshots_CONFIG = CONFIG["timeseries"]
 year = pd.Timestamp(snapshots_CONFIG["start"]).year
+cutout_modules = "_".join(CONFIG["cutout_modules"])
 end_exclusive = pd.Timestamp(snapshots_CONFIG["end"]) + pd.Timedelta(days=1)
 sns = pd.date_range(
     start=snapshots_CONFIG["start"],
@@ -62,7 +63,7 @@ if CONFIG["timeseries"]["test_mode"]:
     sns = sns[:168]  # first week only
 
 # --- Load ERA5 cutout from local folder ---
-cutout_path = os.path.join(dirname, CONFIG["cutout_dir"], f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, year=year)}.nc")
+cutout_path = os.path.join(dirname, CONFIG["cutout_dir"], f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, year=year, modules=cutout_modules)}.nc")
 if not os.path.exists(cutout_path):
     raise FileNotFoundError(f"Cutout file not found: {cutout_path}")
 logging.info(f"  Loading cutout: {cutout_path}")

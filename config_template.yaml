@@ -23,7 +23,7 @@ cutout_modules: [era5-edh] #[mandatory][sarah, era5-edh, era5-corrected] List of
 cutout_features: [wind, influx, temperature] #[mandatory][wind, influx, temperature] list of ERA5 variables to download; wind energy: wind; solar energy: influx, temperature
 # "wind_corrected","wind_corrected_extrapolated","wind_shear_exp_corrected"
 
-cutout_name: "{study_region_name}_{year}_edh" #[mandatory][string] Cutout file name template 
+cutout_name: "{study_region_name}_{year}_{modules}" #[mandatory][string] Cutout file name template; multiple modules are joined with underscores
 
 #-- Timeseries settings -------------------------------------------------------------
 timeseries:
@@ -95,6 +95,5 @@ ninja:
     height: 100 # default wind hub height in m (used when hubheight_column_name is empty or the cell is blank)
     tilt: 35 # solar, used if technologies.solar.resource.slope is not set
     azim: 180 # solar, used if technologies.solar.resource.azimuth is not set
-
 
 
