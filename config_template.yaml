@@ -20,6 +20,7 @@ cutout_timeframe:
     end: 2024-12-31 #[mandatory][YYYY-MM-DD] end date for weather data download 
 cutout_dir: cutouts #[mandatory][string] Local directory for cutout files 
 cutout_modules: [era5-edh] #[mandatory][sarah, era5-edh, era5-corrected] List of cutout modules to use 
+sarah_from_api: True
 cutout_features: [wind, influx, temperature] #[mandatory][wind, influx, temperature] list of ERA5 variables to download; wind energy: wind; solar energy: influx, temperature
 # "wind_corrected","wind_corrected_extrapolated","wind_shear_exp_corrected"
 
