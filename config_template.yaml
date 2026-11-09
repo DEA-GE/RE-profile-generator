@@ -53,7 +53,7 @@ technologies:
             hubheight_column_name: hub_height # [optional] column in shapes file with hub height per polygon; empty cells use the turbine default
             smooth: False
             add_cutout_windspeed: True
-        correction_factor: 1.0
+        correction_factor: 0.9 # account for losses
         clip_p_max_pu: 0.01
     offwind:
         resource:
