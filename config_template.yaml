@@ -80,7 +80,7 @@ technologies:
             orientation: latitude_optimal
             #    slope: 35.0
             #    azimuth: 180.0
-            tracking: null
+            tracking: null # [optional] atlite: [horizontal/tilted_horizontal/vertical/dual], REninja: [1/2] --> [1-axis(azimuth)/2-axis(tilt&azimuth)]
         correction_factor: 1.0
         clip_p_max_pu: 0.01
 
