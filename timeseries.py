@@ -241,8 +241,16 @@ for tech_name in enabled_techs:
     combined = combined.iloc[:, order]
     combined.index.name = None
 
+    filename_tech_name = tech_name
+    if method == "wind":
+        wind_speed_status = {
+            "wnd100m": "uncorrected",
+            "wnd100m_corrected": "corrected",
+        }[CONFIG["technologies"]["wind_speed_variable"]]
+        filename_tech_name = f"{tech_name}_{wind_speed_status}"
+
     out_file = os.path.join(
-        output_dir, f"{tech_name}_{year}_{study_region_name}.csv"
+        output_dir, f"{filename_tech_name}_{year}_{study_region_name}.csv"
     )
     combined.to_csv(out_file)
 

@@ -73,8 +73,10 @@ python reninja.py
 
 Results are written to `output/`. The atlite workflow writes one CSV per enabled
 technology (`<technology>_<year>_<region>.csv`) and a text file recording the
-technology configuration and source files. The Renewables.ninja workflow writes
-CSV files with an `_REninja` suffix and a GeoJSON of representative points.
+technology configuration and source files. Wind technology CSVs include
+`uncorrected` or `corrected` after the technology name, according to
+`technologies.wind_speed_variable`. The Renewables.ninja workflow writes CSV
+files with an `_REninja` suffix and a GeoJSON of representative points.
 
 ## Notes
 
