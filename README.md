@@ -4,6 +4,7 @@ This tool creates hourly wind and solar generation profiles from weather
 data using [atlite](https://atlite.readthedocs.io/) and [Renewables.ninja API](https://www.renewables.ninja/).
 
 ## Setup
+If you have no python setup yet, follow the instructions under "Prerequisites" [here](https://lava-tool.readthedocs.io/en/latest/home/getting_started/) in order to install conda, VSCode and Git.
 
 From the repository root, create and activate the Conda environment:
 
