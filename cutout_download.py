@@ -66,7 +66,7 @@ cutout = atlite.Cutout(
 )
 
 # download
-#print("\ncheck status: https://cds.climate.copernicus.eu/requests?tab=all\n")
+print("\ncheck status if downloading from Copernicus Climate Data Store:\n https://cds.climate.copernicus.eu/requests?tab=all\n")
 cutout.prepare(
     features=CONFIG["cutout_features"],
 #        monthly_requests=True,
