@@ -69,6 +69,10 @@ second computes profiles from that cutout and the configured shape file.
 python reninja.py
 ```
 
+### Accessible data
+<img width="3063" height="1556" alt="REprofileGenerator_dataOverview" src="https://github.com/user-attachments/assets/6a901e8b-49e0-4af9-9f22-86f2c1922f96" />
+
+
 ## Results
 
 Results are written to `output/`. The atlite workflow writes one CSV per enabled
@@ -80,5 +84,5 @@ files with an `_REninja` suffix and a GeoJSON of representative points.
 
 ## Notes
 
-- [Web Viewer](https://jome1.github.io/ERA5_webapp/) for inspecting cutouts
+- [Cutout Web Viewer](https://jome1.github.io/ERA5_webapp/) for inspecting cutouts from atlite
 - [Time Series Explorer](https://www.unditas.com/) for inspecting RE profiles (.csv files)
