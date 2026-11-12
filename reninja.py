@@ -137,6 +137,15 @@ def to_api_turbine_name(name):
     return name.replace(".", " ", 1)
 
 
+def print_mean_value(df, tech):
+    """Print mean value (capacity factor) for each timeseries."""
+    print(f"\n  Mean values (capacity factor) for {tech}:")
+    for col in df.columns:
+        cf = df[col].mean()
+        label = f"{col[0]} ({col[1]})" if isinstance(col, tuple) else col
+        print(f"    {label}: {cf:.4f}")
+
+
 # --- Download and save timeseries profiles for each technology ---
 for tech_name in enabled_techs:
     tech_params = technologies[tech_name]
@@ -221,5 +230,7 @@ for tech_name in enabled_techs:
     out_file = os.path.join(output_dir, f"{tech_name}_{year}_{study_region_name}_REninja.csv")
     df.to_csv(out_file)
     logging.info(f"    Saved {os.path.basename(out_file)}  ({len(df)} timesteps × {df.shape[1]} columns)")
+    
+    print_mean_value(df, tech_name)
 
 logging.info("Done — all RE Ninja profiles downloaded.")

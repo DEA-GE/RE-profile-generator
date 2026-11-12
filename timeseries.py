@@ -124,6 +124,15 @@ matrix = indicator.stack(spatial=["y", "x"])
 output_dir = os.path.join(dirname, "output")
 os.makedirs(output_dir, exist_ok=True)
 
+# --- Print capacity factor for each timeseries ---
+def print_mean_value(df, tech):
+    """Print mean value (capacity factor) for each timeseries."""
+    print(f"\n  Mean values (capacity factor) for {tech}:")
+    for col in df.columns:
+        cf = df[col].mean()
+        label = f"{col[0]} ({col[1]})" if isinstance(col, tuple) else col
+        print(f"    {label}: {cf:.4f}")
+
 # --- Generate and save timeseries profiles for each technology ---
 assignments = {}
 for tech_name in enabled_techs:
@@ -258,6 +267,8 @@ for tech_name in enabled_techs:
         f"    Saved {os.path.basename(out_file)}  "
         f"({len(combined)} timesteps × {combined.shape[1]} columns)"
     )
+    
+    print_mean_value(combined, tech_name)
 
 
 logging.info("Done — all profiles generated.")
