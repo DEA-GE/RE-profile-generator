@@ -86,3 +86,4 @@ files with an `_REninja` suffix and a GeoJSON of representative points.
 
 - [Cutout Web Viewer](https://jome1.github.io/ERA5_webapp/) for inspecting cutouts from atlite
 - [Time Series Explorer](https://www.unditas.com/) for inspecting RE profiles (.csv files)
+- [Pan-European Climate Database (PECD)](https://cds.climate.copernicus.eu/datasets/sis-energy-pecd?tab=download) for Europe + MA, DZ, TN, LY, EG, JO, IL, PS, LE, SY, CY, TR
