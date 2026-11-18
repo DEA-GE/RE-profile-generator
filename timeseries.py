@@ -256,7 +256,12 @@ for tech_name in enabled_techs:
             "wnd100m": "uncorrected",
             "wnd100m_corrected": "corrected",
         }[CONFIG["technologies"]["wind_speed_variable"]]
-        filename_tech_name = f"{tech_name}_{wind_speed_status}"
+        correction_factor_name = f"{str(correction_factor).replace('.', '')}corF"
+        filename_tech_name = (
+            f"{tech_name}_{wind_speed_status}_{correction_factor_name}"
+        )
+        if base_resource.get("smooth", False):
+            filename_tech_name = f"{filename_tech_name}_smoothed"
 
     out_file = os.path.join(
         output_dir, f"{filename_tech_name}_{year}_{study_region_name}.csv"
