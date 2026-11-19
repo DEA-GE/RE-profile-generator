@@ -312,6 +312,14 @@ def load_turbine_or_panel(name, dirname, default_hub_height=None):
     logging.info(f"    Using atlite internal turbine/panel: {name}")
     return name
 
+def cutout_period_label(start, end):
+    """Return 'YYYY' if start/end span exactly one calendar year (Jan 1 - Dec 31), else 'YYYY-MM-DD_YYYY-MM-DD'."""
+    start, end = pd.Timestamp(start), pd.Timestamp(end)
+    if (start.year == end.year and (start.month, start.day) == (1, 1)
+            and (end.month, end.day) == (12, 31)):
+        return str(start.year)
+    return f"{start:%Y-%m-%d}_{end:%Y-%m-%d}"
+
 def to_52_weeks(df, weeks=52):
     """Return `weeks` full weeks starting at the first Monday 00:00; a missing tail is filled from the start of df."""
     idx = df.index

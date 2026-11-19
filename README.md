@@ -30,9 +30,10 @@ The tool reads a .geojson file with polygons for renewable energy areas from the
 
 Edit `config.yaml` for the study region, weather-data period, input shapes,
 and technologies to process. Set `timeseries.start` and `timeseries.end` as
-`YYYY-MM-DD` dates, just like `cutout_timeframe.start` and
-`cutout_timeframe.end`; both dates are included, and the cutout must cover the
-entire time-series period. The polygons file must be available at the configured
+`YYYY-MM-DD` dates; both dates are included, and the same period is used for the
+weather data download (cutout). The cutout file name contains the year if the
+period is a full calendar year (Jan 1 to Dec 31), otherwise the start and end
+dates. The polygons file must be available at the configured
 `shapes_filepath`, and `shapes_name_column` must name its area identifier
 column. Configure any credentials required by the selected atlite weather-data
 modules before downloading a cutout.
@@ -50,18 +51,22 @@ Select the technologies to be processed (onwind, offwind, windspeeds, solar) in 
 
 ### Data via atlite
 
-Run commands from the repository root, in order:
-
-```terminal
-python cutout_download.py
-```
+Run from the repository root:
 
 ```terminal
 python timeseries.py
 ```
 
-The first command downloads and saves the weather cutout under `cutouts/`. The
-second computes profiles from that cutout and the configured shape file.
+If the weather cutout for the configured region and period does not exist yet
+under `cutouts/`, it is downloaded first. Profiles are then computed from that
+cutout and the configured shape file. An existing cutout is reused as is, so
+delete it if you change the study area or `cutout_features`.
+
+To only download the cutout without computing profiles, run:
+
+```terminal
+python cutout_download.py
+```
 
 ### Data via REninja
 
@@ -76,7 +81,7 @@ python reninja.py
 ## Results
 
 Results are written to `output/`. The atlite workflow writes one CSV per enabled
-technology (`<technology>_<year>_<region>.csv`) and a text file recording the
+technology (`<technology>_<period>_<region>.csv`, period as in the cutout name) and a text file recording the
 technology configuration and source files. Wind technology CSVs include
 `uncorrected` or `corrected` after the technology name, according to
 `technologies.wind_speed_variable`. The Renewables.ninja workflow writes CSV

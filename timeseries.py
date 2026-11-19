@@ -46,7 +46,7 @@ logging.info(f"  {len(regions)} regions loaded")
 
 # --- Build time snapshots ---
 snapshots_CONFIG = CONFIG["timeseries"]
-year = pd.Timestamp(snapshots_CONFIG["start"]).year
+period = cutout_period_label(snapshots_CONFIG["start"], snapshots_CONFIG["end"])
 cutout_modules = "_".join(CONFIG["cutout_modules"])
 end_exclusive = pd.Timestamp(snapshots_CONFIG["end"]) + pd.Timedelta(days=1)
 sns = pd.date_range(
@@ -62,8 +62,48 @@ if CONFIG["timeseries"]["drop_leap_day"]:
 if CONFIG["timeseries"]["test_mode"]: 
     sns = sns[:168]  # first week only
 
+cutout_path = os.path.join(dirname, CONFIG["cutout_dir"], f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, period=period, modules=cutout_modules)}.nc")
+
+# ==================== CUTOUT DOWNLOAD (optional) ====================
+# Downloads the weather cutout for timeseries.start - timeseries.end if it does not exist yet
+# (same as cutout_download.py). Delete this block to only load an existing cutout.
+if not os.path.exists(cutout_path):
+    os.makedirs(os.path.dirname(cutout_path), exist_ok=True)
+    custom_filename = CONFIG["study_area"].get("custom_study_area_filename")
+    region = get_study_area_polygon(
+        source=CONFIG["study_area"].get("source"),
+        adm_source=CONFIG["study_area"].get("GADM_source"),
+        country_code=CONFIG.get("country_code"),
+        level=CONFIG["study_area"].get("GADM_level"),
+        admin_name=CONFIG["study_area"].get("GADM_region_name"),
+        custom_polygon_path=os.path.join("input_data", custom_filename) if custom_filename else None,
+        bbox=CONFIG["study_area"].get("bbox"),
+    )
+    region.to_file(os.path.join(dirname, "input_data", f"{study_region_name}.geojson"), index=False)
+
+    # bounding box 0.3 degrees bigger than the study area (or the configured bbox)
+    if CONFIG["study_area"].get("source") == "bbox":
+        bounds = CONFIG["study_area"].get("bbox")
+    else:
+        d = 0.3
+        bounds = region.total_bounds + [-d, -d, d, d]
+    logging.info(f"  Bounding box (EPSG:4326): minx: {bounds[0]}, miny: {bounds[1]}, maxx: {bounds[2]}, maxy: {bounds[3]}")
+
+    logging.info(f"  Downloading weather data: {snapshots_CONFIG['start']} to {snapshots_CONFIG['end']}")
+    logging.info("  Check status if downloading from Copernicus Climate Data Store: https://cds.climate.copernicus.eu/requests?tab=all")
+    download_cutout = atlite.Cutout(
+        path=cutout_path,
+        module=CONFIG["cutout_modules"],
+        x=slice(bounds[0], bounds[2]),
+        y=slice(bounds[1], bounds[3]),
+        time=slice(f"{snapshots_CONFIG['start']}", end_exclusive - pd.Timedelta(hours=1)),
+    )
+    download_cutout.prepare(features=CONFIG["cutout_features"])
+else:
+    logging.info(f"  Cutout already downloaded, skipping download: {cutout_path}")
+# ================== END CUTOUT DOWNLOAD ==============================
+
 # --- Load ERA5 cutout from local folder ---
-cutout_path = os.path.join(dirname, CONFIG["cutout_dir"], f"{CONFIG['cutout_name'].format(study_region_name=study_region_name, year=year, modules=cutout_modules)}.nc")
 if not os.path.exists(cutout_path):
     raise FileNotFoundError(f"Cutout file not found: {cutout_path}")
 logging.info(f"  Loading cutout: {cutout_path}")
@@ -132,6 +172,7 @@ def print_mean_value(df, tech):
         cf = df[col].mean()
         label = f"{col[0]} ({col[1]})" if isinstance(col, tuple) else col
         print(f"    {label}: {cf:.4f}")
+    print()
 
 # --- Generate and save timeseries profiles for each technology ---
 assignments = {}
@@ -264,7 +305,7 @@ for tech_name in enabled_techs:
             filename_tech_name = f"{filename_tech_name}_smoothed"
 
     out_file = os.path.join(
-        output_dir, f"{filename_tech_name}_{year}_{study_region_name}.csv"
+        output_dir, f"{filename_tech_name}_{period}_{study_region_name}.csv"
     )
     combined.to_csv(out_file)
 
@@ -279,7 +320,7 @@ for tech_name in enabled_techs:
 logging.info("Done — all profiles generated.")
 
 # --- Save technologies dictionary, shapes filename, and cutout name to a text file ---
-tech_file = os.path.join(output_dir, f"technologies_{year}_{study_region_name}.txt")
+tech_file = os.path.join(output_dir, f"technologies_{period}_{study_region_name}.txt")
 with open(tech_file, "w", encoding="utf-8") as f:
     f.write(f"shapes_file: {os.path.basename(shapes_path)}\n")
     f.write(f"cutout_file: {os.path.basename(cutout_path)}\n\n")

@@ -14,21 +14,18 @@ study_area:
     bbox: [9.8828, 54.9881, 10.876700000000001, 55.780899999999995] # [situational][xmin, ymin, xmax, ymax]; Odense: [9.8828, 54.9881, 10.876700000000001, 55.780899999999995]
 
 
-#-- Weather data download settings -------------------------------------------------------------
-cutout_timeframe: 
-    start: 2024-01-01 #[mandatory][YYYY-MM-DD] start date for weather data download 
-    end: 2024-12-31 #[mandatory][YYYY-MM-DD] end date for weather data download 
+#-- Weather data download settings (period is taken from timeseries.start/end) ------------------
 cutout_dir: cutouts #[mandatory][string] Local directory for cutout files 
 cutout_modules: [era5-edh] #[mandatory][sarah, era5-edh, era5-corrected] List of cutout modules to use 
 cutout_features: [wind, influx, temperature] #[mandatory][wind, influx, temperature] list of ERA5 variables to download; wind energy: wind; solar energy: influx, temperature
 # "wind_corrected","wind_corrected_extrapolated","wind_shear_exp_corrected"
 
-cutout_name: "{study_region_name}_{year}_{modules}" #[mandatory][string] Cutout file name template; multiple modules are joined with underscores
+cutout_name: "{study_region_name}_{period}_{modules}" #[mandatory][string] Cutout file name template; {period} is the year for a full calendar year (e.g. 2024), otherwise start_end dates (e.g. 2024-01-15_2024-06-30); multiple modules are joined with underscores
 
 #-- Timeseries settings -------------------------------------------------------------
 timeseries:
-    start: 2024-01-01 #[mandatory][YYYY-MM-DD]
-    end: 2024-12-31 #[mandatory][YYYY-MM-DD] Both start and end dates are inclusive
+    start: 2024-01-01 #[mandatory][YYYY-MM-DD] also the start date of the weather data download (cutout)
+    end: 2024-12-31 #[mandatory][YYYY-MM-DD] also the end date of the weather data download (cutout); both start and end dates are inclusive
     drop_leap_day: True #[mandatory][True/False] Whether to drop February 29 in leap years
     week52: False #[mandatory][True/False] Output 52 full weeks from the first Monday (tail filled from the start)
     test_mode: False #[mandatory][True/False] Quick test mode: only compute the first week (168 hours)
