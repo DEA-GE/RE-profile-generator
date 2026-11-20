@@ -35,15 +35,6 @@ enabled_techs = technologies.pop(
 )  # Extract enable list, default to all
 logging.info(f"  Technologies to process: {enabled_techs}")
 
-# --- Load region shapes ---
-shapes_path = os.path.join(dirname, CONFIG["shapes_filepath"].format(study_region_name=study_region_name))
-logging.info(f"Loading shapes from {shapes_path}")
-shapes = gpd.read_file(shapes_path)
-name_col = CONFIG.get("shapes_name_column", "name")
-shapes = shapes.set_index(name_col).rename_axis("region")
-regions = shapes.geometry
-logging.info(f"  {len(regions)} regions loaded")
-
 # --- Build time snapshots ---
 snapshots_CONFIG = CONFIG["timeseries"]
 period = cutout_period_label(snapshots_CONFIG["start"], snapshots_CONFIG["end"])
@@ -102,6 +93,19 @@ if not os.path.exists(cutout_path):
 else:
     logging.info(f"  Cutout already downloaded, skipping download: {cutout_path}")
 # ================== END CUTOUT DOWNLOAD ==============================
+
+if not enabled_techs:
+    logging.info("No technologies enabled; skipping profile generation.")
+    raise SystemExit(0)
+
+# --- Load region shapes ---
+shapes_path = os.path.join(dirname, CONFIG["shapes_filepath"].format(study_region_name=study_region_name))
+logging.info(f"Loading shapes from {shapes_path}")
+shapes = gpd.read_file(shapes_path)
+name_col = CONFIG.get("shapes_name_column", "name")
+shapes = shapes.set_index(name_col).rename_axis("region")
+regions = shapes.geometry
+logging.info(f"  {len(regions)} regions loaded")
 
 # --- Load ERA5 cutout from local folder ---
 if not os.path.exists(cutout_path):

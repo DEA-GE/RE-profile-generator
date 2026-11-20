@@ -38,7 +38,7 @@ dates. The polygons file must be available at the configured
 column. Configure any credentials required by the selected atlite weather-data
 modules before downloading a cutout.
 
-Select the technologies to be processed (onwind, offwind, windspeeds, solar) in the list under `timeseries.enable` in the config file.
+Select the technologies to be processed (onwind, offwind, windspeeds, solar) in `technologies.enable` in the config file. If the list is empty, `python timeseries.py` only downloads the configured cutout and exits without generating profiles.
 
 
 ### Weather data sources and workflow overview
