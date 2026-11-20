@@ -62,11 +62,6 @@ under `cutouts/`, it is downloaded first. Profiles are then computed from that
 cutout and the configured shape file. An existing cutout is reused as is, so
 delete it if you change the study area or `cutout_features`.
 
-To only download the cutout without computing profiles, run:
-
-```terminal
-python cutout_download.py
-```
 
 ### Data via REninja
 

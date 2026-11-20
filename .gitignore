@@ -6,7 +6,7 @@
 !README.md
 !env.yaml
 !config_template.yaml
-!cutout_download.py
+!cutout_download_archived.py
 !reninja.py
 !timeseries.py
 !utils.py
