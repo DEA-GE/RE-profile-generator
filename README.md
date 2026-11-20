@@ -1,7 +1,7 @@
 # Renewable energy profile generator
 
 This tool creates hourly wind and solar generation profiles from weather
-data using [atlite](https://atlite.readthedocs.io/) and [Renewables.ninja API](https://www.renewables.ninja/).
+data using [atlite](https://atlite.readthedocs.io/) and [Renewables.ninja API](https://www.renewables.ninja/). The tool is inspired by and partly based on the tool [res-profiles](https://github.com/GreenDealUkraina/res-profiles).
 
 ## Setup
 If you have no python setup yet, follow the instructions under "Prerequisites" [here](https://lava-tool.readthedocs.io/en/latest/home/getting_started/) in order to install conda, VSCode and Git. You can also follow this [video tutorial](https://vimeo.com/1246293170/0f5bd74308?share=copy).
