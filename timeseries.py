@@ -307,6 +307,9 @@ for tech_name in enabled_techs:
         )
         if base_resource.get("smooth", False):
             filename_tech_name = f"{filename_tech_name}_smoothed"
+    elif method == "pv":
+        tracking = base_resource.get("tracking")
+        filename_tech_name = f"{tech_name}_{'fixed' if tracking is None else tracking}"
 
     out_file = os.path.join(
         output_dir, f"{filename_tech_name}_{period}_{study_region_name}.csv"

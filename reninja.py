@@ -227,7 +227,13 @@ for tech_name in enabled_techs:
     df = df.iloc[:, order]
     df.index.name = None
 
-    out_file = os.path.join(output_dir, f"{tech_name}_{year}_{study_region_name}_REninja.csv")
+    filename_tech_name = tech_name
+    if method == "pv":
+        tracking = resource.get("tracking")
+        tracking_label = "fixed" if tracking is None or tracking == 0 else f"tracking{tracking}"
+        filename_tech_name = f"{tech_name}_{tracking_label}"
+
+    out_file = os.path.join(output_dir, f"{filename_tech_name}_{year}_{study_region_name}_REninja.csv")
     df.to_csv(out_file)
     logging.info(f"    Saved {os.path.basename(out_file)}  ({len(df)} timesteps × {df.shape[1]} columns)")
     

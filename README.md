@@ -79,8 +79,7 @@ Results are written to `output/`. The atlite workflow writes one CSV per enabled
 technology (`<technology>_<period>_<region>.csv`, period as in the cutout name) and a text file recording the
 technology configuration and source files. Wind technology CSVs include
 `uncorrected` or `corrected` after the technology name, according to
-`technologies.wind_speed_variable`. The Renewables.ninja workflow writes CSV
-files with an `_REninja` suffix and a GeoJSON of representative points.
+`technologies.wind_speed_variable`. Solar CSVs include the configured tracking mode in the filename.
 
 ## Notes
 
